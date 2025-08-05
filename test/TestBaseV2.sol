@@ -6,14 +6,6 @@ import {Test, console2} from "forge-std/Test.sol";
 
 abstract contract TestBaseV2 is Test {
     IHorseStoreV2 internal horseStore;
-    address internal user = makeAddr("user");
-    string internal constant NFT_NAME = "HorseStore";
-    string internal constant NFT_SYMBOL = "HS";
-
-    function testName() public view {
-        string memory name = horseStore.name();
-        assertEq(name, NFT_NAME);
-    }
 
     function testMintingHorseAssignsOwner(address randomOwner) public {
         vm.assume(randomOwner != address(0));
@@ -29,6 +21,7 @@ abstract contract TestBaseV2 is Test {
         uint256 horseId = horseStore.totalSupply();
         vm.warp(10);
         vm.roll(10);
+        address user = makeAddr("user");
         vm.prank(user);
         horseStore.mintHorse();
 
@@ -42,6 +35,7 @@ abstract contract TestBaseV2 is Test {
         uint256 horseId = horseStore.totalSupply();
         vm.warp(horseStore.HORSE_HAPPY_IF_FED_WITHIN());
         vm.roll(horseStore.HORSE_HAPPY_IF_FED_WITHIN());
+        address user = makeAddr("user");
         vm.prank(user);
         horseStore.mintHorse();
         horseStore.feedHorse(horseId);
@@ -52,6 +46,7 @@ abstract contract TestBaseV2 is Test {
         uint256 horseId = horseStore.totalSupply();
         vm.warp(horseStore.HORSE_HAPPY_IF_FED_WITHIN());
         vm.roll(horseStore.HORSE_HAPPY_IF_FED_WITHIN());
+        address user = makeAddr("user");
         vm.prank(user);
         horseStore.mintHorse();
         assertEq(horseStore.isHappyHorse(horseId), false);

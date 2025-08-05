@@ -5,7 +5,7 @@ import {IHorseStoreV1} from "../src/interfaces/IHorseStoreV1.sol";
 import {Test} from "forge-std/Test.sol";
 
 abstract contract TestBaseV1 is Test {
-    IHorseStoreV1 horseStore;
+    IHorseStoreV1 internal horseStore;
 
     function testReadCount() public view {
         uint256 initalValue = horseStore.readNumberOfHorses();

@@ -2,34 +2,46 @@
 pragma solidity 0.8.20;
 
 import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IHorseStoreV2} from "./interfaces/IHorseStoreV2.sol";
 
-/* 
+/*
  * @title HorseStore
  * @author equestrian_lover_420
- * @notice An NFT that represents a horse. Horses should be fed daily to keep happy, ideally several times a day. 
+ * @notice An NFT that represents a horse. Horses should be fed daily to keep happy, ideally several times a day.
  */
 contract HorseStoreV2 is IHorseStoreV2, ERC721Enumerable {
-    string constant NFT_NAME = "HorseStore";
-    string constant NFT_SYMBOL = "HS";
+    string private constant NFT_NAME = "HorseStore";
+    string private constant NFT_SYMBOL = "HS";
     uint256 public constant HORSE_HAPPY_IF_FED_WITHIN = 1 days;
 
     mapping(uint256 id => uint256 lastFedTimeStamp) public horseIdToFedTimeStamp;
 
     constructor() ERC721(NFT_NAME, NFT_SYMBOL) {}
 
+    /// @inheritdoc ERC721Enumerable
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, ERC721Enumerable)
+        returns (bool)
+    {
+        return interfaceId == type(IHorseStoreV2).interfaceId || super.supportsInterface(interfaceId);
+    }
+
     /*
-     * @notice allows anyone to mint their own horse NFT. 
+     * @notice allows anyone to mint their own horse NFT.
      */
     function mintHorse() external {
         _safeMint(msg.sender, totalSupply());
     }
 
-    /* 
+    /*
      * @param horseId the id of the horse to feed
-     * @notice allows anyone to feed anyone else's horse. 
-     * 
-     * @audit-medium: Feeding unminted horeses is currently allowed! 
+     * @notice allows anyone to feed anyone else's horse.
+     *
+     * @audit-medium: Feeding unminted horeses is currently allowed!
      */
     function feedHorse(uint256 horseId) external {
         horseIdToFedTimeStamp[horseId] = block.timestamp;

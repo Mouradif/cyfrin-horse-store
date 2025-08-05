@@ -1,0 +1,382 @@
+// Storage
+#define constant SLOT_TOTAL_SUPPLY = 0x1000000000000000000000000000000000000000000000000000000000000000
+#define constant SLOT_MASK_APPROVED = 0x2000000000000000000000000000000000000000000000000000000000000000
+#define constant SLOT_MASK_BALANCE = 0x3000000000000000000000000000000000000000000000000000000000000000
+#define constant SLOT_MASK_LAST_FED = 0x4000000000000000000000000000000000000000000000000000000000000000
+
+// Interfaces
+#define constant INTERFACE_ERC165 = 0x01ffc9a7
+#define constant INTERFACE_ERC721 = 0x80ac58cd
+#define constant INTERFACE_ERC721_METADATA = 0x5b5e139f
+#define constant INTERFACE_ERC721_ENUMERABLE = 0x780e9d63
+#define constant INTERFACE_HORSE_STORE = 0xb8cf3a3d
+
+// Constants
+#define constant HORSE_HAPPY_IF_FED_WITHIN = 0x15180 // 86400 = 1 days
+#define constant MAX_SUPPLY = 0xFFFFFFFFFFFFFFFF
+
+// Functions (sorted by selector)
+#define function supportsInterface(bytes4) view returns (bool)                              // 0x01ffc9a7
+#define function name() view returns (string)                                               // 0x06fdde03
+#define function getApproved(uint256) view returns (address)                                // 0x081812fc
+#define function approve(address,uint256) nonpayable returns ()                             // 0x095ea7b3
+#define function totalSupply() view returns (uint256)                                       // 0x18160ddd
+#define function transferFrom(address,address,uint256) nonpayable returns ()                // 0x23b872dd
+#define function safeTransferFrom(address,address,uint256) nonpayable returns ()            // 0x42842e0e
+#define function mintHorse() nonpayable returns ()                                          // 0x61fc6a67
+#define function isHappyHorse(uint256) view returns (bool)                                  // 0x62134726
+#define function ownerOf(uint256) view returns(address)                                     // 0x6352211e
+#define function balanceOf(address) view returns (uint256)                                  // 0x70a08231
+#define function HORSE_HAPPY_IF_FED_WITHIN() view returns (uint256)                         // 0x8c1d96ae
+#define function symbol() view returns (string)                                             // 0x95d89b41
+#define function setApprovalForAll(address,bool) nonpayable returns ()                      // 0xa22cb465
+#define function safeTransferFrom(address,address,uint256,bytes) nonpayable returns ()      // 0xb88d4fde
+#define function feedHorse(uint256) nonpayable returns ()                                   // 0xc65e2eaa
+#define function tokenURI(uint256) view returns(string)                                     // 0xc87b56dd
+#define function isApprovedForAll(address,address) view returns(bool)                       // 0xe985e9c5
+#define function horseIdToFedTimeStamp(uint256) view returns (uint256)                      // 0xf163af78
+
+// Events
+#define event Transfer(address,address,uint256)
+#define event Approval(address,address,uint256)
+#define event ApprovalForAll(address,address,bool)
+
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xe0 shr
+    __FUNC_SIG("safeTransferFrom(address,address,uint256,bytes)") dup2 gt label_dispatch_2_2 jumpi
+    __FUNC_SIG(isHappyHorse) dup2 gt label_dispatch_2_1 jumpi
+    __FUNC_SIG(totalSupply) dup2 gt label_dispatch_1_2 jumpi
+
+    // Dispatch 1_1
+    dup1 __FUNC_SIG(supportsInterface) eq label_supports_interface jumpi
+    dup1 __FUNC_SIG(name) eq label_name jumpi
+    dup1 __FUNC_SIG(getApproved) eq label_get_approved jumpi
+    dup1 __FUNC_SIG(approve) eq label_approve jumpi
+    __FUNC_SIG(totalSupply) eq label_total_supply jumpi
+    label_global_revert jump
+
+    label_dispatch_1_2:
+    dup1 __FUNC_SIG(transferFrom) eq label_transfer_from jumpi
+    dup1 __FUNC_SIG("safeTransferFrom(address,address,uint256)") eq label_safe_transfer_from jumpi
+    dup1 __FUNC_SIG(mintHorse) eq label_mint_horse jumpi
+    __FUNC_SIG(isHappyHorse) eq label_is_happy_horse jumpi
+    label_global_revert jump
+
+    label_dispatch_2_1:
+    dup1 __FUNC_SIG(ownerOf) eq label_owner_of jumpi
+    dup1 __FUNC_SIG(balanceOf) eq label_balance_of jumpi
+    dup1 __FUNC_SIG(HORSE_HAPPY_IF_FED_WITHIN) eq label_hhifw jumpi
+    dup1 __FUNC_SIG(symbol) eq label_symbol jumpi
+    dup1 __FUNC_SIG(setApprovalForAll) eq label_set_approval_for_all jumpi
+    __FUNC_SIG("safeTransferFrom(address,address,uint256,bytes)") eq label_safe_transfer_from_bytes jumpi
+    label_global_revert jump
+
+    label_dispatch_2_2:
+    dup1 __FUNC_SIG(feedHorse) eq label_feed_horse jumpi
+    dup1 __FUNC_SIG(tokenURI) eq label_token_uri jumpi
+    dup1 __FUNC_SIG(isApprovedForAll) eq label_is_approved_for_all jumpi
+    __FUNC_SIG(horseIdToFedTimeStamp) eq label_horse_id_to_fed_timestamp jumpi
+
+    label_global_revert:
+    GLOBAL_REVERT()
+
+    label_supports_interface:
+    SUPPORTS_INTERFACE()
+
+    label_name:
+    NAME()
+
+    label_get_approved:
+    GET_APPROVED()
+
+    label_approve:
+    APPROVE()
+
+    label_total_supply:
+    TOTAL_SUPPLY()
+
+    label_transfer_from:
+    TRANSFER_FROM()
+
+    label_safe_transfer_from:
+    SAFE_TRANSFER_FROM()
+
+    label_mint_horse:
+    MINT_HORSE()
+
+    label_is_happy_horse:
+    IS_HAPPY_HORSE()
+
+    label_owner_of:
+    OWNER_OF()
+
+    label_balance_of:
+    BALANCE_OF()
+
+    label_hhifw:
+    HHIFW()
+
+    label_symbol:
+    SYMBOL()
+
+    label_set_approval_for_all:
+    SET_APPROVAL_FOR_ALL()
+
+    label_safe_transfer_from_bytes:
+    SAFE_TRANSFER_FROM_BYTES()
+
+    label_feed_horse:
+    FEED_HORSE()
+
+    label_token_uri:
+    TOKEN_URI()
+
+    label_is_approved_for_all:
+    IS_APPROVED_FOR_ALL()
+
+    label_horse_id_to_fed_timestamp:
+    HORSE_ID_TO_FED_TIMESTAMP()
+}
+
+#define macro GLOBAL_REVERT() = takes(0) returns(0) {
+    0x00 0x00 revert
+}
+
+#define macro SUPPORTS_INTERFACE() = takes(0) returns(0) {
+    0x04 calldataload 0xe0 shr
+    dup1 [INTERFACE_ERC165] eq label_supports_interface_ok jumpi
+    dup1 [INTERFACE_ERC721] eq label_supports_interface_ok jumpi
+    dup1 [INTERFACE_ERC721_METADATA] eq label_supports_interface_ok jumpi
+    dup1 [INTERFACE_ERC721_ENUMERABLE] eq label_supports_interface_ok jumpi
+    dup1 [INTERFACE_HORSE_STORE] eq label_supports_interface_ok jumpi
+    0x20 0x00 return
+
+    label_supports_interface_ok:
+    0x1 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro NAME() = takes(0) returns(0) {
+    0x20 0x00 mstore
+    0x0a486f72736553746f7265 0x2a mstore
+    0x4a 0x00 return
+}
+
+#define macro GET_APPROVED() = takes(0) returns(0) {
+    0x04 calldataload [SLOT_MASK_APPROVED] or
+    sload 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro APPROVE() = takes(0) returns(0) {
+    0x24 calldataload caller        // [caller, tokenId]
+    dup2 sload xor                  // [caller != ownerOf(tokenId), tokenId]
+    label_global_revert jumpi       // [tokenId]
+    0x04 calldataload dup1          // [approved, approved, tokenId]
+    dup3 [SLOT_MASK_APPROVED] or    // [slot, approved, approved, tokenId]
+    sstore                          // [approved, tokenId]
+    caller __EVENT_HASH(Approval)   // [sig, owner, approved, tokenId]
+    0x00 0x00 log4 stop
+}
+
+#define macro TOTAL_SUPPLY() = takes(0) returns(0) {
+    [SLOT_TOTAL_SUPPLY] sload 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro TRANSFER_FROM() = takes(0) returns(0) {
+    0x44 calldataload               // [tokenId]
+    0x24 calldataload               // [to, tokenId]
+    0x04 calldataload               // [from, to, tokenId]
+    _CHECK_AUTHORIZED()             // [from, to, tokenId]
+    _TRANSFER()
+    stop
+}
+
+#define macro SAFE_TRANSFER_FROM() = takes(0) returns(0) {
+    0x44 calldataload                   // [tokenId]
+    0x24 calldataload                   // [to, tokenId]
+    0x04 calldataload                   // [from, to, tokenId]
+    _CHECK_AUTHORIZED()                 // [from, to, tokenId]
+    dup3 dup3 dup3                      // [from, to, tokenId, from, to, tokenId]
+    _TRANSFER()                         // [from, to, tokenId]
+    dup2 extcodesize                    // [isContract(to), from, to, tokenId]
+    label_acceptance_check jumpi        // [from, to, tokenId]
+    stop
+
+    label_acceptance_check:
+    _ACCEPTANCE_SELECTOR() dup1         // [selector, selector, from, to, tokenId]
+    0x00 mstore                         // [selector, from, to, tokenId]
+    caller 0x04 mstore                  // [selector, from, to, tokenId]
+    swap1 0x24 mstore                   // [selector, to, tokenId]
+    swap2 0x44 mstore                   // [to, selector]
+    0x80 0x64 mstore                    // [to, selector]
+    0x00 0xa4 0x00 0x00 0x04 swap5      // [to, 0x00, 0x00, 0xa4, 0x00, selector]
+    gas call                            // [success, selector]
+    iszero label_global_revert jumpi    // [selector]
+    0xe0 shr 0x00 mload 0xe0 shr        // [uint32(returnData), uint32(selector)]
+    xor label_global_revert jumpi       // []
+    stop
+}
+
+#define macro MINT_HORSE() = takes(0) returns(0) {
+    [SLOT_TOTAL_SUPPLY] sload       // [tokenId]
+    caller 0x00                     // [0x00, caller, tokenId]
+    dup2 [SLOT_MASK_BALANCE] or     // [caller_balance_slot, 0x00, caller, tokenId]
+    dup1 sload 0x01 add             // [caller_balance + 1, caller_balance_slot, 0x00, caller, tokenId]
+    swap1 sstore                    // [0x00, caller, tokenId]
+    dup2 dup4 sstore                // [0x00, caller, tokenId]
+    dup3 0x01 add                   // [tokenId + 1, 0x00, caller, tokenId]
+    [SLOT_TOTAL_SUPPLY] sstore      // [0x00, caller, tokenId]
+    _EMIT_TRANSFER_EVENT()          // []
+    stop
+}
+
+#define macro IS_HAPPY_HORSE() = takes(0) returns(0) {
+    0x04 calldataload [SLOT_MASK_LAST_FED] or
+    sload                           // [last_fed_timestamp]
+    timestamp sub                   // [elapsed_since_last_fed]
+    [HORSE_HAPPY_IF_FED_WITHIN] gt
+    0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro OWNER_OF() = takes(0) returns(0) {
+    0x04 calldataload               // [tokenId]
+    [MAX_SUPPLY] dup2 gt            // [tokenId > max_supply, tokenId]
+    label_owner_of_return jumpi
+    sload 0x00 mstore
+
+    label_owner_of_return:
+    0x20 0x00 return
+}
+
+#define macro BALANCE_OF() = takes(0) returns(0) {
+    0x04 calldataload [SLOT_MASK_BALANCE] or
+    sload 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro HHIFW() = takes(0) returns(0) {
+    [HORSE_HAPPY_IF_FED_WITHIN] 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro SYMBOL() = takes(0) returns(0) {
+    0x20 0x00 mstore
+    0x024853 0x22 mstore
+    0x42 0x00 return
+}
+
+#define macro SET_APPROVAL_FOR_ALL() = takes(0) returns(0) {
+    0x04 calldataload                   // [operator]
+    0x24 calldataload dup2              // [operator, status, operator]
+    caller 0x00 mstore                  // [operator, status, operator]
+    dup1 0x20 mstore                    // [operator, status, operator]
+    0x40 0x00 sha3                      // [slot, operator, status, operator]
+    sstore                              // [status, operator]
+    0x00 mstore                         // [operator]
+    caller __EVENT_HASH(ApprovalForAll) // [sig, caller, operator]
+    0x20 0x00 log4
+    stop
+}
+
+#define macro SAFE_TRANSFER_FROM_BYTES() = takes(0) returns(0) {
+    0x44 calldataload                   // [tokenId]
+    0x24 calldataload                   // [to, tokenId]
+    0x04 calldataload                   // [from, to, tokenId]
+    _CHECK_AUTHORIZED()                 // [from, to, tokenId]
+    dup3 dup3 dup3                      // [from, to, tokenId, from, to, tokenId]
+    _TRANSFER()                         // [from, to, tokenId]
+    dup2 extcodesize                    // [isContract(to), from, to, tokenId]
+    label_acceptance_check jumpi        // [from, to, tokenId]
+    stop
+
+    label_acceptance_check:
+    _ACCEPTANCE_SELECTOR() dup1         // [selector, selector, from, to, tokenId]
+    0x00 mstore                         // [selector, from, to, tokenId]
+    caller 0x04 mstore                  // [selector, from, to, tokenId]
+    swap1 0x24 mstore                   // [selector, to, tokenId]
+    swap2 0x44 mstore                   // [to, selector]
+    0x80 0x64 mstore                    // [to, selector]
+    0x84 calldataload dup1 dup1         // [bytes.length, bytes.length, bytes.length, to, selector]
+    0x84 mstore 0xa4 0xa4 calldatacopy  // [bytes.length, to, selector]
+    0xa4 add 0x00 swap1                 // [argsLen, 0x00, to, selector]
+    0x00 0x00 0x04 swap6                // [to, 0x00, 0x00, argsSize, 0x00, 0x04, selector]
+    gas call                            // [success, selector]
+    iszero label_global_revert jumpi    // [selector]
+    0xe0 shr 0x00 mload 0xe0 shr        // [uint32(returnData), uint32(selector)]
+    xor label_global_revert jumpi       // []
+    stop
+}
+
+#define macro FEED_HORSE() = takes(0) returns(0) {
+    timestamp                           // [timestamp]
+    0x04 calldataload                   // [horseId, timestamp]
+    [SLOT_MASK_LAST_FED] or             // [slot(horseIdFedAt), timestamp]
+    sstore stop
+}
+
+#define macro TOKEN_URI() = takes(0) returns(0) {
+    0x20 0x00 mstore
+    0x40 0x00 return
+}
+
+#define macro IS_APPROVED_FOR_ALL() = takes(0) returns(0) {
+    0x04 calldataload 0x00 mstore
+    0x20 calldataload 0x20 mstore
+    0x40 0x00 sha3 sload
+    0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro HORSE_ID_TO_FED_TIMESTAMP() = takes(0) returns(0) {
+    0x04 calldataload [SLOT_MASK_LAST_FED] or
+    sload 0x00 mstore
+    0x20 0x00 return
+}
+
+#define macro _TRANSFER() = takes(3) returns(1) {
+    // Initial stack                // [from, to, tokenId]
+    dup1 [SLOT_MASK_BALANCE] or     // [balance_from_slot, from, to, tokenId]
+    0x01 dup2 sload                 // [balance_from, 0x01, balance_from_slot, from, to, tokenId]
+    sub swap1 sstore                // [from, to, tokenId]
+    dup2 [SLOT_MASK_BALANCE] or     // [balance_to_slot, from, to, tokenId]
+    0x01 dup2 sload                 // [balance_to, 0x01, balance_to_slot, from, to, tokenId]
+    add swap1 sstore                // [from, to, tokenId]
+    dup2 dup4                       // [tokenId, to, from, to, tokenId]
+    sstore                          // [from, to, tokenId]
+    0x00                            // [0x00, from, to, tokenId]
+    dup4 [SLOT_MASK_APPROVED] or    // [approved_slot, 0x00, from, to, tokenId]
+    sstore                          // [from, to, tokenId]
+    _EMIT_TRANSFER_EVENT()          // []
+}
+
+#define macro _EMIT_TRANSFER_EVENT() = takes(3) returns(0) {
+    // Initial stack                // [from, to, tokenId]
+    __EVENT_HASH(Transfer)          // [sig, from, to, tokenId]
+    0x00 0x00 log4
+}
+
+#define macro _CHECK_AUTHORIZED() = takes(3) returns(3) {
+    // Initial stack                // [from, to, tokenId]
+    dup3 sload                      // [ownerOf(tokenId), from, to, tokenId]
+    dup2 dup2 xor                   // [ownerOf(tokenId) != from, ownerOf(tokenId), from, to, tokenId]
+    label_global_revert jumpi       // [ownerOf(tokenId), from, to, tokenId]
+    caller eq                       // [msg.sender == ownerOf(tokenId), from, to, tokenId]
+    label_check_authorized_ok jumpi // [from, to, tokenId]
+    dup3 [SLOT_MASK_APPROVED] or    // [slot_approved, from, to, tokenId]
+    sload caller eq                 // [msg.sender == isApproved(tokenId), from, to, tokenId]
+    label_check_authorized_ok jumpi // [from, to, tokenId]
+    dup1 0x00 mstore                // [from, to, tokenId]
+    caller 0x20 mstore              // [from, to, tokenId]
+    sha3 sload                      // [isApprovedForAll(from, caller), from, to, tokenId]
+    label_check_authorized_ok jumpi // [from, to, tokenId]
+    GLOBAL_REVERT()
+
+    label_check_authorized_ok:
+}
+
+#define macro _ACCEPTANCE_SELECTOR() = takes(0) returns(1) {
+    __RIGHTPAD(__FUNC_SIG("onERC721Received(address,address,uint256,bytes)"))
+}
